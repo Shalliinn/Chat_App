@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Chat App</title>
+</head>
+<body>
+    <form id="form">
+    <div id="chat">
+    </div>
+    <div id="main">
+        <input type="text" id="message"  >
+    <input type="submit" value="Send">
+</div>
+</form> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.1.2/axios.min.js"></script>  
+<script>
+let Form=document.getElementById('form')
+let message=document.getElementById('message')
+let chat=document.getElementById('chat');
+const token = localStorage.getItem('token');
+Form.addEventListener('submit',addMsg)
+
+document.addEventListener('DOMContentLoaded',()=>{
+    
+    axios.get("http://localhost:3000/chat/get",{headers:{'Authorization':token}})
+    .then((response)=>{
+        console.log(response);
+        loadonscreen(response.data)
+    })
+})
+function loadonscreen(data){
+let name=data.user.name
+    for(var i=0;i<data.allchats.length;i++){
+        if(data.allchats[i].userName==name){
+     var li=document.createElement('li');
+ li.className='msg';
+ li.appendChild(document.createTextNode(`You:${data.allchats[i].message}`))
+ chat.appendChild(li);
+        }
+        else{
+    var li=document.createElement('li');
+ li.className='msg';
+ li.appendChild(document.createTextNode(`${data.allchats[i].userName}:${data.allchats[i].message}`))
+ chat.appendChild(li);
+}
+
+    }
+}
+function addMsg(e){
+    e.preventDefault();
+    let Msg={
+        message:message.value
+    }
+    console.log(Msg,'28');
+        newMsg(Msg)
+}
+
+function newMsg(Msg){
+    setTimeout(()=>{
+     axios.post("http://localhost:3000/chat/post",Msg,{headers:{'Authorization':token}})
+     .then((data)=>{
+        console.log(data,'33');
+       showonscreen(data);
+     })
+     .catch((err)=>{
+        console.log(err);
+     })
+   
+    },1000)
+   
+}
+function showonscreen(data){
+    console.log(data,'41');
+var li=document.createElement('li');
+ li.className='msg';
+ li.appendChild(document.createTextNode(`You:${data.data.data.message}`))
+ chat.appendChild(li);
+}
+
+
+</script>
+</body>
+</html>
