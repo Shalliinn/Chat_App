@@ -1,5 +1,6 @@
 const Chat=require('../models/chat')
 const User=require('../models/user')
+
 exports.chatpost=(req,res,next)=>{
     const message=req.body.message;
     const id=req.user.id
@@ -19,12 +20,16 @@ exports.chatpost=(req,res,next)=>{
 }
 
 exports.chatget=(req,res,next)=>{
-    Chat.findAll()
-    .then((chat)=>{
+  //console.log(req.query.lastmsgid,'23');
+  let lastmsgid=+req.query.lastmsgid;
+ // console.log(typeof(lastmsgid),'24');
 
-        res.status(200).json({allchats:chat,user:req.user})
-     })
-.catch (error=>{
-    console.log(error)
-})
-}
+    Chat.findAll({offset:lastmsgid})
+    .then((chat)=>{
+      //console.log(chat,'39');
+      res.status(200).json({allchats:chat,user:req.user})
+    })
+    .catch(error=>{
+      console.log(error)
+    })
+  }
