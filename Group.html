@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>create group</title>
+</head>
+<body>
+    <form id="mform">
+        <div id="ename">
+            <label for="name">Enter Group Name:</label><br>
+            <input type="text" id="name"><br>
+            <button id="gname">Submit Name</button>
+        </div>
+   
+    <div class="popup-container" id="container">
+    <div class="popup">
+    <div id="users">
+    </div>
+    <button id="tochat">Create group</button>
+    </div>
+    </div>   
+    </form> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.1.2/axios.min.js"></script>  
+<script>
+    var Form=document.getElementById('form');
+    const name=document.getElementById('name');
+    var users=document.getElementById('users');
+    var gname=document.getElementById('gname');
+    const token = localStorage.getItem('token');
+    const container=document.getElementById('container')
+    const Tochat=document.getElementById('tochat')
+let gid;
+    gname.addEventListener('click',addgrp)
+    Tochat.addEventListener('click',create)
+    function create(e){
+        console.log('1');
+        e.preventDefault();
+        container.classList.remove('active');
+        window.location.href="chat.html"
+    }
+     function addgrp(e){
+       e.preventDefault();
+
+
+        console.log('28');
+        console.log(name.value);
+       // localStorage.setItem('name',name.value)
+
+        const obj={
+            name:name.value
+        }
+if(obj.name=="" || obj.name==null){
+     alert('enter group name')
+}else{
+
+   alert('Group is added Now add the users')
+   container.classList.add('active');
+     axios.post(`http://localhost:3000/group/post`,obj,{headers:{'Authorization':token}})
+     .then((response)=>{
+        console.log(response);
+        gid=response.data.data.id; 
+        Add(response.data.user.id) 
+
+     })
+        
+     }
+        
+        
+    }
+
+    document.addEventListener('DOMContentLoaded',()=>{
+        axios.get(`http://localhost:3000/user/get`,{headers:{'Authorization':token}})
+        .then((response)=>{
+            console.log(response.data,'33');
+            loadusers(response.data)
+        })
+       })
+
+       function loadusers(data){
+        console.log(data.alluser.length,'53')
+        for(var i=0;i<data.alluser.length;i++){
+            let id=data.alluser[i].id
+            if(data.user.name==data.alluser[i].name){
+                continue;
+            }
+           
+ let li=document.createElement('li');
+ li.className='user';
+ li.appendChild(document.createTextNode(`${data.alluser[i].name} `));
+
+ var AddBtn=document.createElement('button');
+ AddBtn.className='btn';
+ AddBtn.appendChild(document.createTextNode('ADD'));
+ li.appendChild(AddBtn);
+users.appendChild(li)
+AddBtn.addEventListener('click',adduser)
+function adduser(e){
+    e.preventDefault();
+    console.log(gid);
+    if(gid==undefined){  
+    alert('enter group name')
+}
+else{
+    Add(id)
+        users.removeChild(li);
+}
+  //  console.log('1');
+
+   }
+       }
+    }
+   
+   function Add(id){
+
+console.log(id);
+    let Obj={
+        userId:id,
+        groupId:gid
+    }
+    console.log(Obj);
+    axios.post(`http://localhost:3000/groupchat/post`,Obj,{headers:{'Authorization':token}})
+    .then((response)=>{
+        console.log(response);
+    }).catch(err=>console.log(err))
+   }
+</script>
+</body>
+</html>

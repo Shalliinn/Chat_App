@@ -1,0 +1,41 @@
+.popup-container{
+    position:fix;
+    width:710px;
+    left: 200px;;
+    bottom: 0;
+    right:0;
+    background-color:rgb(252, 192, 192);
+    display: none;
+    align-items:center;
+    justify-content: center;
+}
+.popup-containerr{
+    position:relative;
+    width:710px;
+    top: -1510px;
+    left: 200px;;
+    bottom: 0;
+    right:0;
+    background-color:rgb(252, 192, 192);
+    display: none;
+    align-items:center;
+    justify-content: center;
+}
+.popup-container.active{
+    display: flex;
+}
+.popup-containerr.active{
+    display: flex;
+}
+.popup{
+    background-color: rgb(175, 240, 240);
+    border-radius: 1px;
+    padding: 0rem;
+    position: relative;
+    width: 710px;
+
+}
+
+.del{
+    background-color: red;
+}

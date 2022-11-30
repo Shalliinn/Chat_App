@@ -9,58 +9,138 @@
 </head>
 <body>
     <form name="my-form" id="form">
-    <div id="chat">
-    </div>
-    <div id="uchat">
-    </div>
-    <div id="main">
-        <input type="text" value="" id="message"  >
-    <input type="submit" value="Send">
+ <button onclick="location='Group.html'">Create Group</button>
+<h2>Group list:</h2>
+<div id="groups">
 </div>
+        <div class="popup-containerr" id="container">
+        <div class="popup">
+            <div id="mainn">
+                <div id="chat">
+                </div>
+                <div id="uchat">
+                </div>
+                <div id="'type">
+                    <input type="text" value="" id="message"><input type="submit" id="send" value="Send">
+                </div>
+            </div>
+    
+      </div> 
+</div>
+
+
 </form> 
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.1.2/axios.min.js"></script>  
 <script>
 let Form=document.getElementById('form')
 let message=document.getElementById('message')
-let chat=document.getElementById('chat');
+let group=document.getElementById('groups')
+let chat=document.getElementById('chat');   
 let uchat=document.getElementById('uchat');
 const token = localStorage.getItem('token');
+const send=document.getElementById('send')
+const main=document.getElementById('mainn')
+const container=document.getElementById('container')
 Form.addEventListener('submit',addMsg)
-
 let id;
 let di;
+let refreshIntervalId ;
 //setTimeout(()=>{})
 document.addEventListener('DOMContentLoaded',()=>{
     //let myobj_deserialized=JSON.parse(localStorage.getItem("myObj"))
    // console.log(msg);
-        axios.get(`http://localhost:3000/chat/get?lastmsgid=${0}`,{headers:{'Authorization':token}})
+
+   setInterval(()=>{
+         axios.get('http://localhost:3000/group/get',{headers:{'Authorization':token}})
+.then((response)=>{
+   //    console.log(response);
+    loadgrp(response.data.allgroup)
+}).catch(err=>console.log(err))
+    },1000)
+})  
+      
+   
+function loadgrp(data){
+
+    group.innerHTML=""
+  //  uchat.innerHTML=""
+
+    for(var i=0;i<data.length;i++){
+       let grpid=data[i].id;
+       // console.log(id);
+   //
+       var li=document.createElement('li')
+    var btn=document.createElement('button');
+    var dlt=document.createElement('button');
+ btn.className='grp';
+ dlt.className='del';
+ btn.appendChild(document.createTextNode(`${data[i].Gname}`))
+ dlt.appendChild(document.createTextNode(`X`))
+ li.appendChild(btn)
+ li.appendChild(dlt)
+ group.appendChild(li);
+ btn.addEventListener('click',opengrp)
+dlt.addEventListener('click',deletegrp)
+function deletegrp(e){
+    e.preventDefault();
+    alert('are sure U want to exit the group')
+}
+    function opengrp(e){
+        localStorage.setItem('groupid',grpid)
+    e.preventDefault()
+  
+    container.classList.add("active");
+
+    clearInterval(refreshIntervalId);
+   
+    console.log(grpid);
+    axios.get(`http://localhost:3000/chat/get/${grpid}/?lastmsgid=${0}`,{headers:{'Authorization':token}})
     .then((response)=>{
         console.log(response);
         storage(response.data)
-     loadonscreen(response.data)
+    // loadonscreen(response.data)
     let msg=JSON.parse(localStorage.getItem('messages'))
         if(msg==null || msg.length==0){
              id=0;
         }
         else{
-             id=msg[msg.length-1].id;
+             id=msg.length;
         }
         console.log(msg);   
         console.log(id)
-         
-         setInterval(()=>{
-        axios.get(`http://localhost:3000/chat/get?lastmsgid=${id}`,{headers:{'Authorization':token}})  
-    .then((response)=>{
-        console.log(response);
-         //storage(response.data)
-         loadonscreen1(response.data)
+      //  let i=response.data.allchats[0].groupId
+       // console.log(i);    
+        refreshIntervalId = setInterval(  
+     async function(){
+        response=await axios.get(`http://localhost:3000/chat/get/${grpid}/?lastmsgid=${id}`,{headers:{'Authorization':token}}) 
+
+         if(response.data.allchats.length!=0) {
+            msg.push(response.data.allchats[0])
+    //   // console.log(response.data.allchats);
+        // console.log(msg);
+         }
+       
+      storage(msg)
+      loadonscreen1(response.data,msg)
+    //  let msgs=JSON.parse(localStorage.getItem('messages'))
+    //  if(msgs==null || msgs.length==0){
+    //        id=0;
+    //  }
+    //    else{
+        id=msg.length;
+       // console.log(id);
+    //   }
     
+      }, 1000)
 
     })
-},1000)  
+    
+         // console.log(grpid)
 
-    })
-})
+}
+}
+}
 
     
     //     axios.get(`http://localhost:3000/chat/get?lastmsgid=${id}`,{headers:{'Authorization':token}})  
@@ -88,53 +168,61 @@ document.addEventListener('DOMContentLoaded',()=>{
 function storage(data){
     let myobj_serialized=JSON.stringify(data.allchats);
 localStorage.setItem('messages',myobj_serialized);
-console.log(localStorage.getItem('messages'))
+//console.log(localStorage.getItem('messages'))
 }
-function loadonscreen1(data){
+
+function loadonscreen1(data,msg){
     let name=data.user.name
-    uchat.innerHTML=""
-    for(var i=0;i<data.allchats.length;i++){
-        if(data.allchats[i].userName==name){
+    uchat.innerHTML=" ";
+    for(var i=0;i<msg.length;i++){
+        if(msg[i].userName==name){
      var li=document.createElement('li');
  li.className='msg';
- li.appendChild(document.createTextNode(`You:${data.allchats[i].message}`))
+ li.appendChild(document.createTextNode(`You:${msg[i].message}`))
  uchat.appendChild(li);
         }
         else{
     var li=document.createElement('li');
  li.className='msg';
- li.appendChild(document.createTextNode(`${data.allchats[i].userName}:${data.allchats[i].message}`))
+ li.appendChild(document.createTextNode(`${msg[i].userName}:${msg[i].message}`))
  uchat.appendChild(li); 
 }
     }
 }
-function loadonscreen(data){
-let name=data.user.name
-    for(var i=0;i<data.allchats.length;i++){
-        if(data.allchats[i].userName==name){
-     var li=document.createElement('li');
- li.className='msg';
- li.appendChild(document.createTextNode(`You:${data.allchats[i].message}`))
- chat.appendChild(li);
-        }
-        else{
-    var li=document.createElement('li');
- li.className='msg';
- li.appendChild(document.createTextNode(`${data.allchats[i].userName}:${data.allchats[i].message}`))
- chat.appendChild(li);
-}
+// function loadonscreen(data){
+// let name=data.user.name
+// chat.innerHTML='';
+//     for(var i=0;i<data.allchats.length;i++){
+//         if(data.allchats[i].userName==name){
+//      var li=document.createElement('li');
+//  li.className='msg';
+//  li.appendChild(document.createTextNode(`You:${data.allchats[i].message}`))
+//  chat.appendChild(li);
+//         }
+//         else{
+//     var li=document.createElement('li');
+//  li.className='msg';
+//  li.appendChild(document.createTextNode(`${data.allchats[i].userName}:${data.allchats[i].message}`))
+//  chat.appendChild(li);
+// }
 
-    }
-}
+//     }
+// }
 function addMsg(e){
     e.preventDefault();
+    di=localStorage.getItem('groupid')
+    console.log(di,'174');
+    
     let Msg={
-        message:message.value
+        message:message.value,
+        grpId:di
     }
     newMsg(Msg)
 }
 
 function newMsg(Msg){
+    
+    
     axios.post("http://localhost:3000/chat/post",Msg,{headers:{'Authorization':token}})
      .then((data)=>{
         console.log(data,'33');

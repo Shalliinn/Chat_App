@@ -8,7 +8,7 @@ const authenticate=(req,res,next)=>{
 //console.log(token,'8');
         const user=jwt.verify(token,process.env.TOKEN_SECRET);
       // console.log(user.userId,'10');
-       console.log(typeof(user.userId));
+     //  console.log(typeof(user.userId));
         User.findByPk(user.userId).then(user=>{
           // console.log(user,'12')
             req.user=user;

@@ -5,5 +5,5 @@ const userauthentication=require('../middleware/auth')
 const router = express.Router();
 
 router.post('/chat/post', userauthentication.authenticate,chatController.chatpost);
-router.get('/chat/get', userauthentication.authenticate,chatController.chatget);
+router.get('/chat/get/:grpId', userauthentication.authenticate,chatController.chatget);
 module.exports=router;
