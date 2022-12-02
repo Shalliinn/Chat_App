@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Group Info:</title>
+</head>
+<body>
+    <form id="form">
+        <h2>Members:</h2>
+        <div id="users"> 
+        </div>
+        <div class="popup-container" id="container">
+            <div class="popup">
+                <input type="text" id="filter" placeholder="search member">
+            <div id="members">
+            </div>
+            <button id="tochat">Done</button>
+            </div>
+            </div>   
+        <a href="chat.html">Back to Home:</a>
+    </form>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.1.2/axios.min.js"></script>  
+    <script>
+        var Form=document.getElementById('form');
+        let token = localStorage.getItem('token');
+        const users=document.getElementById('users')
+        const list=document.getElementsByClassName('userd')
+        var member=document.getElementById('members')
+        var filter=document.getElementById('filter')
+        var container=document.getElementById('container')
+        let grpid=localStorage.getItem('groupid')
+        var close=document.getElementById('tochat');
+        close.addEventListener('click',close)
+        function close(e){
+            e.preventDefault();
+            reload();
+            container.classList.remove('active')
+        }
+           // console.log(grpid);
+        
+        document.addEventListener('DOMContentLoaded',reload)
+       function reload(){
+        refreshIntervalId = setInterval(  
+            async function(){
+           let response=await axios.get(`http://localhost:3000/group-users/get/${grpid}`,{headers:{'Authorization':token}})
+    
+          //  console.log(response.data,'24');
+            loadgrp(response.data)
+            loadmembers(response.data)
+        },2000)
+       
+       }
+
+function loadgrp(data){
+    users.innerHTML=""
+//console.log('1');
+if(data.userchat[0].isAdmin){
+   for(var i=0;i<data.grpuser.length;i++){
+   // console.log(id);
+for(var j=0;j<data.allgroup.length;j++){
+    if(data.grpuser[i].id==data.allgroup[j].userId){
+       // console.log(data.grpuser[i].name);
+    let li=document.createElement('li');
+    let grpchatid=data.allgroup[j].id
+    let Name=data.grpuser[i].name;
+ li.className='user';
+ if(data.grpuser[i].name==data.loged.name){
+    li.appendChild(document.createTextNode(`You--Admin`));
+}
+else if(data.allgroup[j].isAdmin){
+    li.appendChild(document.createTextNode(`${data.grpuser[i].name}--Admin `));
+
+}
+else{
+    //console.log(data.alluser[i].name)
+    
+    li.appendChild(document.createTextNode(`${data.grpuser[i].name} `));
+    var make=document.createElement('button');
+    make.className='mkbtn';
+    make.appendChild(document.createTextNode('make admin'))
+    li.appendChild(make);
+    reload()
+    make.addEventListener('click',makeAdmin)
+    function makeAdmin(e){
+        e.preventDefault();
+        alert(`Are u sure U wanna make Admin `)
+        let obj={
+            isAdmin:true,
+            id: grpchatid
+        }
+        
+        axios.post(`http://localhost:3000/group-users/update`,obj,{headers:{'Authorization':token}})
+        .then((response)=>{
+        }).catch(err=>{console.log(err)})
+        //reload()
+
+    }
+}
+ 
+ var remBtn=document.createElement('button');
+ remBtn.className='btn';
+ remBtn.appendChild(document.createTextNode('remove'));
+ li.appendChild(remBtn);
+users.appendChild(li)
+remBtn.addEventListener('click',deletMember)
+function deletMember(e){
+e.preventDefault();
+alert(`Are You sure You want to remove ${Name}`)
+axios.delete(`http://localhost:3000/group-user/delete/${grpchatid}`,{headers:{'Authorization':token}})
+.then((response)=>{
+    console.log(response);
+}).catch(err=>console.log(err))
+}
+}
+}       
+   }
+   var il=document.createElement('li')
+var Add=document.createElement('button');
+Add.className='add';
+Add.appendChild(document.createTextNode('Add Members'));
+il.appendChild(Add);
+users.appendChild(il)
+Add.addEventListener('click',AddMember)
+function AddMember(e){
+    e.preventDefault()
+    console.log('1');
+    container.classList.add('active');
+}
+}
+else{
+    for(var i=0;i<data.grpuser.length;i++){
+   // console.log(id);
+for(var j=0;j<data.allgroup.length;j++){
+    if(data.grpuser[i].id==data.allgroup[j].userId){
+        console.log(data.grpuser[i].name);
+    let li=document.createElement('li');
+ li.className='user';
+ if(data.grpuser[i].name==data.loged.name){
+    li.appendChild(document.createTextNode(`You--`));
+}
+else if(data.allgroup[j].isAdmin){
+    li.appendChild(document.createTextNode(`${data.grpuser[i].name}--Admin `));
+
+}
+else{
+    //console.log(data.alluser[i].name)
+    li.appendChild(document.createTextNode(`${data.grpuser[i].name} `))
+}
+users.appendChild(li)   
+    }
+}
+    }
+}
+       }
+    
+function loadmembers(data){
+console.log(data);
+member.innerHTML=""
+let a=new Set();
+ gid=data.userchat[0].groupId;
+
+for(var i=0;i<data.alluser.length;i++){
+   // console.log(id);
+   let flag=    0
+for(var j=0;j<data.grpuser.length;j++){
+        if(data.grpuser[j].id==data.alluser[i].id){
+flag=1;
+           break;
+        }
+       
+}
+if(flag==0){
+    a.add(data.alluser[i]) 
+}
+
+}
+console.log(a)
+let b=[...a]
+console.log(b);
+for(var i=0;i<b.length;i++){
+            let idd=b[i].id       
+ let li=document.createElement('li');
+ li.className='userd';
+ li.appendChild(document.createTextNode(`${b[i].name} `));
+
+ var AddBtn=document.createElement('button');
+ AddBtn.className='btn';
+ AddBtn.appendChild(document.createTextNode('ADD'));
+ li.appendChild(AddBtn);
+member.appendChild(li)
+AddBtn.addEventListener('click',adduser)
+function adduser(e){
+    e.preventDefault();
+    console.log(gid);
+  
+    Add(idd,false)
+  member.removeChild(li);
+}
+  //  console.log('1');
+
+   
+       }
+    }
+    filter.addEventListener('keyup',filtermembers)
+
+       function filtermembers(e){
+        clearInterval(refreshIntervalId);
+        var text=e.target.value.toLowerCase();
+        console.log(text);  
+console.log(list);
+        Array.from(list).forEach(function(member){
+ var membername=member.firstChild.textContent;
+console.log(membername);
+if(membername.toLowerCase().indexOf(text)!=-1){
+    member.style.display='block'
+    console.log('1');
+}
+else{
+    member.style.display='none' 
+}
+      }
+            
+        );
+    }
+   function Add(id  ,is){
+
+console.log(id);
+    let Obj={
+        userId:id,
+        groupId:gid,
+        isAdmin:is
+    }
+    console.log(Obj);
+    axios.post(`http://localhost:3000/groupchat/post`,Obj,{headers:{'Authorization':token}})
+    .then((response)=>{
+        console.log(response);
+    }).catch(err=>console.log(err))
+   }
+
+
+        </script>
+</body>
+</html>

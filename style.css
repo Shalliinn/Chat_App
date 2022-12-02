@@ -1,25 +1,30 @@
 .popup-container{
     position:fix;
-    width:710px;
-    left: 200px;;
+    padding: 0.2rem;
+    width:350px;
+    left: 150px;
+    top:100px;
     bottom: 0;
     right:0;
-    background-color:rgb(252, 192, 192);
+    background-color:rgb(85, 67, 247);
     display: none;
     align-items:center;
     justify-content: center;
+    overflow-y:scroll;
 }
 .popup-containerr{
-    position:relative;
-    width:710px;
-    top: -1510px;
-    left: 200px;;
-    bottom: 0;
+    position:fixed;
+    width: 900px;
+    height:400;
+    top:10px;
+    left: 400px;;
+    bottom: 10px;
     right:0;
     background-color:rgb(252, 192, 192);
     display: none;
     align-items:center;
-    justify-content: center;
+    justify-content:center;
+    overflow-y:scroll;
 }
 .popup-container.active{
     display: flex;
@@ -27,15 +32,121 @@
 .popup-containerr.active{
     display: flex;
 }
+
 .popup{
-    background-color: rgb(175, 240, 240);
+    background-color: rgb(15, 241, 230);
     border-radius: 1px;
     padding: 0rem;
+    position:relative;
+    width:900px;
+}
+#message{
+    width:750px;
+}
+
+#send{
+    width:104px;
+    border-radius: 1px;
+    border-width: 0.1rem;
+    color:black;
+    background-color: rgb(198, 250, 149);
+}
+button{
+    background-color:rgb(174, 90, 253);
+    color: white;
+}
+.info{
+    background-color: rgb(95, 95, 248);
+    color: white;
+}
+
+form{
+  text-align:center;  
+  border-width:0.2rem;
+  font-weight: bold;
+  width: 350px;
+  border-style:solid;
+  border-radius: 10px;
+  border-color: black;
+  margin :5rem;
+  padding: 20px;
+  background-color:antiquewhite;
+  position: relative;
+  left:500px;
+   top:2px;
+}
+
+#Form {
+    text-align:center;  
+    border-width:0.2rem;
+    font-weight: bold;
+    width: 350px;
+    border-style:solid;
+    border-radius: 10px;
+    border-color: black;
+    margin :5rem;
+    padding: 20px;
+    background-color:antiquewhite;
     position: relative;
-    width: 710px;
+    left:-85px;
+     top:2px;
+     overflow-y:scroll;
+  }
+  #mail{
+    text-align:center
+  }
 
-}
-
-.del{
-    background-color: red;
-}
+  #users{
+    list-style-type: none;
+  }
+  
+  button{
+    background-color:rgb(247, 166, 166);
+    border-style: solid;
+    border-radius: 3px;
+    border-color: black;
+  }
+  #pages{
+    background-color:rgb(146, 216, 241);
+  }
+  input[type=submit] {
+    background-color:rgb(107, 226, 107);
+  }
+  #users button{
+    background-color: rgb(247, 129, 129);
+  }
+  
+  #led{
+    position: relative;
+    left:80px;
+    top:-580px;
+    color: aliceblue;
+    width: 250px;
+  }
+  #file{
+    position: relative;
+    left:1100px;
+    top:-620px;
+    width:200px;
+    color: aliceblue;
+  }
+  .name{
+  font-weight: bold;
+  color: rgb(14, 13, 13);
+  }
+  #led h2{
+    color: rgb(238, 10, 10);
+  }
+  #file h2{
+    color: rgb(243, 7, 7);
+  }
+  .item{
+    list-style-type:circle;
+    
+  }
+  body{
+    background-color:skyblue;
+  }
+  #numbers a{
+    color: aliceblue;
+  }

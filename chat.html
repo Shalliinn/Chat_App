@@ -8,7 +8,7 @@
     <title>Chat App</title>
 </head>
 <body>
-    <form name="my-form" id="form">
+    <form name="my-form" id="Form">
  <button onclick="location='Group.html'">Create Group</button>
 <h2>Group list:</h2>
 <div id="groups">
@@ -21,19 +21,19 @@
                 <div id="uchat">
                 </div>
                 <div id="'type">
-                    <input type="text" value="" id="message"><input type="submit" id="send" value="Send">
+                    <input type="text" value="" id="message"> <input type="submit" id="send" value="Send">
                 </div>
             </div>
     
       </div> 
 </div>
 
-
+<a href="login.html">Back to Login Page:</a>
 </form> 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.1.2/axios.min.js"></script>  
 <script>
-let Form=document.getElementById('form')
+let Form=document.getElementById('Form')
 let message=document.getElementById('message')
 let group=document.getElementById('groups')
 let chat=document.getElementById('chat');   
@@ -72,19 +72,20 @@ function loadgrp(data){
    //
        var li=document.createElement('li')
     var btn=document.createElement('button');
-    var dlt=document.createElement('button');
+    var info=document.createElement('button');
  btn.className='grp';
- dlt.className='del';
+ info.className='info';
  btn.appendChild(document.createTextNode(`${data[i].Gname}`))
- dlt.appendChild(document.createTextNode(`X`))
+ info.appendChild(document.createTextNode(`Info`))
  li.appendChild(btn)
- li.appendChild(dlt)
+ li.appendChild(info)
  group.appendChild(li);
  btn.addEventListener('click',opengrp)
-dlt.addEventListener('click',deletegrp)
-function deletegrp(e){
+info.addEventListener('click',infogrp)
+function infogrp(e){
     e.preventDefault();
-    alert('are sure U want to exit the group')
+    localStorage.setItem('groupid',grpid)
+    window.location.href="groupinfo.html"
 }
     function opengrp(e){
         localStorage.setItem('groupid',grpid)

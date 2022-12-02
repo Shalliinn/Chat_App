@@ -16,6 +16,7 @@ var cors=require('cors');
 const { HasMany } = require('sequelize');
 const Group = require('./models/group');
 const Groupchat = require('./models/groupchat');
+const { truncate } = require('fs');
 app.use(cors());
 app.use(userRoutes);
 app.use(chatRoutes);

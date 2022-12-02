@@ -17,6 +17,7 @@
    
     <div class="popup-container" id="container">
     <div class="popup">
+        <input type="text" id="filter" placeholder="search member">
     <div id="users">
     </div>
     <button id="tochat">Create group</button>
@@ -25,14 +26,18 @@
     </form> 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.1.2/axios.min.js"></script>  
 <script>
-    var Form=document.getElementById('form');
+    var Form=document.getElementById('mform');
     const name=document.getElementById('name');
     var users=document.getElementById('users');
     var gname=document.getElementById('gname');
+    var list=document.getElementsByClassName('user');
+    var filter=document.getElementById('filter')
     const token = localStorage.getItem('token');
     const container=document.getElementById('container')
     const Tochat=document.getElementById('tochat')
+
 let gid;
+
     gname.addEventListener('click',addgrp)
     Tochat.addEventListener('click',create)
     function create(e){
@@ -62,7 +67,7 @@ if(obj.name=="" || obj.name==null){
      .then((response)=>{
         console.log(response);
         gid=response.data.data.id; 
-        Add(response.data.user.id) 
+        Add(response.data.user.id,true) 
 
      })
         
@@ -104,21 +109,42 @@ function adduser(e){
     alert('enter group name')
 }
 else{
-    Add(id)
+    Add(id,false)
         users.removeChild(li);
 }
   //  console.log('1');
 
    }
        }
+     
     }
    
-   function Add(id){
+    filter.addEventListener('keyup',filtermembers)
+       function filtermembers(e){
+        var text=e.target.value.toLowerCase();
+        console.log(text);  
+console.log(list);
+        Array.from(list).forEach(function(member){
+ var membername=member.firstChild.textContent;
+console.log(membername);
+if(membername.toLowerCase().indexOf(text)!=-1){
+    member.style.display='block'
+    console.log('1');
+}
+else{
+    member.style.display='none' 
+}
+      }
+            
+        );
+    }
+   function Add(id,is){
 
 console.log(id);
     let Obj={
         userId:id,
-        groupId:gid
+        groupId:gid,
+        isAdmin:is
     }
     console.log(Obj);
     axios.post(`http://localhost:3000/groupchat/post`,Obj,{headers:{'Authorization':token}})
